@@ -117,25 +117,16 @@ elif authentication_status == True:
 
     # Platform Selector Configuration Dropdown
     if lang == "English":
-        platform = st.selectbox(
-            "Target Social Media Platform:",
-            options=["YouTube Video/Shorts", "Instagram Reels/Post", "Facebook Post/Reels", "LinkedIn Article/Post"]
-        )
+        platform = st.selectbox("Target Social Media Platform:", options=["YouTube Video/Shorts", "Instagram Reels/Post", "Facebook Post/Reels", "LinkedIn Article/Post"])
     else:
-        platform = st.selectbox(
-            "टारगेट सोशल मीडिया प्लेटफॉर्म चुनें:",
-            options=["YouTube Video/Shorts", "Instagram Reels/Post", "Facebook Post/Reels", "LinkedIn Article/Post"]
-        )
+        platform = st.selectbox("टारगेट सोशल मीडिया प्लेटफॉर्म चुनें:", options=["YouTube Video/Shorts", "Instagram Reels/Post", "Facebook Post/Reels", "LinkedIn Article/Post"])
 
     st.markdown("---")
     st.header(f"📊 Enter {platform} Analytics Metrics")
 
     # Dynamic Field Processing Engine
     if lang == "English":
-        topic_shift_input = st.selectbox(
-            "Did you change your core content theme/niche for this specific upload?",
-            options=["No (Consistent Niche)", "Yes (Heavy Topic Shift)"]
-        )
+        topic_shift_input = st.selectbox("Did you change your core content theme/niche for this specific upload?", options=["No (Consistent Niche)", "Yes (Heavy Topic Shift)"])
         
         if "YouTube" in platform:
             ctr_label, ctr_help = "Click-Through Rate (CTR) after 3 hours (%)", "Percentage of viewers who clicked your thumbnail."
@@ -160,10 +151,7 @@ elif authentication_status == True:
         submit_btn = st.button("🚀 Run Algorithm Pulse Check")
         
     else:
-        topic_shift_input = st.selectbox(
-            "क्या आपने इस विशिष्ट पोस्ट/वीडियो के लिए अपना मुख्य टॉपिक बदला है?",
-            options=["नहीं (समान केटेगरी है)", "हाँ (अचानक नया टॉपिक डाला है)"]
-        )
+        topic_shift_input = st.selectbox("क्या आपने इस विशिष्ट पोस्ट/वीडियो के लिए अपना मुख्य टॉपिक बदला है?", options=["नहीं (समान केटेगरी है)", "हाँ (अचानक नया टॉपिक डाला है)"])
         
         if "YouTube" in platform:
             ctr_label = "3 घंटे के बाद क्लिक-थ्रू रेट (CTR) (%)"
@@ -199,16 +187,16 @@ elif authentication_status == True:
         st.markdown("---")
         st.header("🎯 Algorithm Diagnostic Analysis Report")
         
-        # --- 🚀 NEW FLAT LOGIC WITH ZERO NESTING ERRORS ---
-        if probability_dead >= 0.5 and lang == "English":
+        # 👑 THE MASTERSTROKE FIXED CODE: No internal sub-if blocks at all!
+        if probability_dead >= 0.5 and lang == "English" and topic_shift_encoded == 1:
             st.error(f"🚨 **Status: ALGORITHMIC SUPPRESSION DETECTED** (Probability of Failure: {probability_dead * 100:.2f}%)")
-            if topic_shift_encoded == 1:
-                st.warning(f"💡 **Reason:** Shifting your niche on {platform} heavily fractured your core user behavior data model. The system suppressed the impressions!")
-            if topic_shift_encoded == 0:
-                st.warning("💡 **Action Item:** Content niche is safe, but conversion rates are too low to trigger the platform's recommendation engine. Optimize your assets instantly!")
-                
-        elif probability_dead >= 0.5 and lang != "English":
+            st.warning(f"💡 **Reason:** Shifting your niche on {platform} heavily fractured your core user behavior data model. The system suppressed the impressions!")
+            
+        elif probability_dead >= 0.5 and lang == "English" and topic_shift_encoded == 0:
+            st.error(f"🚨 **Status: ALGORITHMIC SUPPRESSION DETECTED** (Probability of Failure: {probability_dead * 100:.2f}%)")
+            st.warning("💡 **Action Item:** Content niche is safe, but conversion rates are too low to trigger the platform's recommendation engine. Optimize your assets instantly!")
+            
+        elif probability_dead >= 0.5 and lang != "English" and topic_shift_encoded == 1:
             st.error(f"🚨 **स्थिति: एल्गोरिदम द्वारा रीच रोक दी गई है** (असफल होने की संभावना: {probability_dead * 100:.2f}%)")
-            if topic_shift_encoded == 1:
-                st.warning(f"💡 **मुख्य कारण:** {platform} पर अचानक केटेगरी बदलने से यूजर बिहेवियर डेटा मॉडल टूट गया है। सिस्टम ने आपकी post की रीच रोक दी है!")
-            if topic_shift_encoded == 0:
+            st.warning(f"💡 **मुख्य कारण:** {platform} पर अचानक केटेगरी बदलने से यूजर बिहेवियर डेटा मॉडल टूट गया है। सिस्टम ने आपकी post की रीच रोक दी है!")
+            
