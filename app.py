@@ -13,7 +13,7 @@ st.set_page_config(
     layout="centered"
 )
 
-# 2. Database Handling: Read and verify config.yaml structure
+# 2. Database Handling: config.yaml से डेटा लोड करना
 if not os.path.exists('config.yaml'):
     default_config = {
         "cookie": {"expiry_days": 30, "key": "abcdef_secret_key", "name": "channelx_cookie"},
@@ -30,14 +30,7 @@ if not os.path.exists('config.yaml'):
 with open('config.yaml', 'r') as file:
     config = yaml.load(file, Loader=SafeLoader)
 
-# 🛠️ Auto-Hash plain passwords to prevent decryption errors
-for username_key in config['credentials']['usernames']:
-    raw_password = config['credentials']['usernames'][username_key]['password']
-    if not str(raw_password).startswith('$2b$') and not str(raw_password).startswith('$2a$'):
-        hashed_password = stauth.Hasher([raw_password]).generate()
-        config['credentials']['usernames'][username_key]['password'] = hashed_password
-
-# 3. Initialize Authenticator Engine safely
+# 3. Initialize Authenticator Engine safely (Auto-hash enabled natively in latest version)
 authenticator = stauth.Authenticate(
     config['credentials'],
     config['cookie']['name'],
@@ -187,7 +180,6 @@ elif authentication_status == True:
         st.markdown("---")
         st.header("🎯 Algorithm Diagnostic Analysis Report")
         
-        # 👑 THE MASTERSTROKE FIXED CODE: No internal sub-if blocks at all!
         if probability_dead >= 0.5 and lang == "English" and topic_shift_encoded == 1:
             st.error(f"🚨 **Status: ALGORITHMIC SUPPRESSION DETECTED** (Probability of Failure: {probability_dead * 100:.2f}%)")
             st.warning(f"💡 **Reason:** Shifting your niche on {platform} heavily fractured your core user behavior data model. The system suppressed the impressions!")
@@ -200,3 +192,8 @@ elif authentication_status == True:
             st.error(f"🚨 **स्थिति: एल्गोरिदम द्वारा रीच रोक दी गई है** (असफल होने की संभावना: {probability_dead * 100:.2f}%)")
             st.warning(f"💡 **मुख्य कारण:** {platform} पर अचानक केटेगरी बदलने से यूजर बिहेवियर डेटा मॉडल टूट गया है। सिस्टम ने आपकी post की रीच रोक दी है!")
             
+        elif probability_dead >= 0.5 and lang != "English" and topic_shift_encoded == 0:
+            st.error(f"🚨 **स्थिति: एल्गोरिदम द्वारा रीच रोक दी गई है** (असफल होने की संभावना: {probability_dead * 100:.2f}%)")
+            st.warning("💡 **सुझाव:** आपकी केटेगरी तो सही है, लेकिन मैट्रिक्स इतने कम हैं कि प्लेटफार्म का रिकमेंडेशन इंजन ट्रिगर नहीं हो रहा। अपनी पोस्ट की क्वालिटी तुरंत सुधारें!")
+            
+        elif probability_dead < 0.5 and lang == "English":
