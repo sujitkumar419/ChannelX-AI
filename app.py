@@ -167,7 +167,7 @@ elif authentication_status == True:
         
         if "YouTube" in platform:
             ctr_label = "3 घंटे के बाद क्लिक-थ्रू रेट (CTR) (%)"
-            ret_label = "ऑडियंस रिटेंशन रेट (Retention) (%)"
+            ret_label = "ऑडियंस रिटेंशन index (%)"
             ratio_label = "शुरुआती व्यूज और सब्सक्राइबर्स का अनुपात (Ratio)"
         elif "Instagram" in platform:
             ctr_label = "शुरुआती 3 सेकंड हुक रेट (Hook Rate) (%)"
@@ -199,15 +199,16 @@ elif authentication_status == True:
         st.markdown("---")
         st.header("🎯 Algorithm Diagnostic Analysis Report")
         
-        if probability_dead >= 0.5:
-            if lang == "English":
-                st.error(f"🚨 **Status: ALGORITHMIC SUPPRESSION DETECTED** (Probability of Failure: {probability_dead * 100:.2f}%)")
-                if topic_shift_encoded == 1:
-                    st.warning(f"💡 **Reason:** Shifting your niche on {platform} heavily fractured your core user behavior data model. The system suppressed the impressions!")
-                else:
-                    st.warning("💡 **Action Item:** Content niche is safe, but conversion rates are too low to trigger the platform's recommendation engine. Optimize your assets instantly!")
-            else:
-                st.error(f"🚨 **स्थिति: एल्गोरिदम द्वारा रीच रोक दी गई है** (असफल होने की संभावना: {probability_dead * 100:.2f}%)")
-                if topic_shift_encoded == 1:
-                    st.warning(f"💡 **मुख्य कारण:** {platform} पर अचानक केटेगरी बदलने से यूजर बिहेवियर डेटा मॉडल टूट गया है। सिस्टम ने आपकी post की रीच रोक दी है!")
-                else:
+        # --- 🚀 NEW FLAT LOGIC WITH ZERO NESTING ERRORS ---
+        if probability_dead >= 0.5 and lang == "English":
+            st.error(f"🚨 **Status: ALGORITHMIC SUPPRESSION DETECTED** (Probability of Failure: {probability_dead * 100:.2f}%)")
+            if topic_shift_encoded == 1:
+                st.warning(f"💡 **Reason:** Shifting your niche on {platform} heavily fractured your core user behavior data model. The system suppressed the impressions!")
+            if topic_shift_encoded == 0:
+                st.warning("💡 **Action Item:** Content niche is safe, but conversion rates are too low to trigger the platform's recommendation engine. Optimize your assets instantly!")
+                
+        elif probability_dead >= 0.5 and lang != "English":
+            st.error(f"🚨 **स्थिति: एल्गोरिदम द्वारा रीच रोक दी गई है** (असफल होने की संभावना: {probability_dead * 100:.2f}%)")
+            if topic_shift_encoded == 1:
+                st.warning(f"💡 **मुख्य कारण:** {platform} पर अचानक केटेगरी बदलने से यूजर बिहेवियर डेटा मॉडल टूट गया है। सिस्टम ने आपकी post की रीच रोक दी है!")
+            if topic_shift_encoded == 0:
