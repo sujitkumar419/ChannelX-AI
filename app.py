@@ -13,14 +13,14 @@ st.set_page_config(
     layout="centered"
 )
 
-# 2. Database Handling: config.yaml से डेटा लोड करना
+# 2. Database Handling: Read and verify config.yaml structure
 if not os.path.exists('config.yaml'):
     default_config = {
         "cookie": {"expiry_days": 30, "key": "abcdef_secret_key", "name": "channelx_cookie"},
         "credentials": {
             "usernames": {
-                "sujit": {"email": "sujit@gmail.com", "first_name": "Sujit", "last_name": "Kumar", "password": "$2a$12$MSYm6Gf5W7H6M9b8D2vK.O0Y2X5G7z8W9q1r3t5y7u9i1o2p3a4s5"},
-                "creator1": {"email": "creator@gmail.com", "first_name": "Rohan", "last_name": "Sharma", "password": "$2b$12$K8y7wD0d/67S8Kz36K2m.O7B6WzD9y3E3h/y4mE3R2fH4A5S6D7H"}
+                "sujit": {"email": "sujit@gmail.com", "first_name": "Sujit", "last_name": "Kumar", "password": "sujit123"},
+                "creator1": {"email": "creator@gmail.com", "first_name": "Rohan", "last_name": "Sharma", "password": "sharma123"}
             }
         }
     }
@@ -30,7 +30,16 @@ if not os.path.exists('config.yaml'):
 with open('config.yaml', 'r') as file:
     config = yaml.load(file, Loader=SafeLoader)
 
-# 3. Authenticator इंजन इनिशियलाइज़ करना (4-Parameters Format)
+# 🛠️ 2026 MASTER PRO-HACK: Dynamically hash plain passwords to prevent decryption errors
+# If the password string does not look like a bcrypt hash, we instantly hash it correctly.
+for username_key in config['credentials']['usernames']:
+    raw_password = config['credentials']['usernames'][username_key]['password']
+    if not str(raw_password).startswith('$2b$') and not str(raw_password).startswith('$2a$'):
+        # Automatically hash using the official library utility
+        hashed_password = stauth.Hasher([raw_password]).generate()[0]
+        config['credentials']['usernames'][username_key]['password'] = hashed_password
+
+# 3. Initialize Authenticator Engine safely with newly structured passwords
 authenticator = stauth.Authenticate(
     config['credentials'],
     config['cookie']['name'],
@@ -53,10 +62,9 @@ with tab1:
 
 with tab2:
     try:
-        # register_user नया यूजर बनाएगा और सही डिटेल्स रिटर्न करेगा
         if authenticator.register_user(location='main'):
             st.success('User registered successfully! Please switch to the Login tab. 🎉')
-            # 💾 जादुई स्टेप: नए यूजर का डेटा परमानेंटली YAML फ़ाइल में सेव करना
+            # Save the updated hashed credentials securely into config.yaml
             with open('config.yaml', 'w') as file:
                 yaml.dump(config, file, default_flow_style=False, allow_unicode=True)
     except Exception as e:
@@ -75,7 +83,6 @@ elif authentication_status == None:
     st.warning("🔒 Please enter your username and password to unlock ChannelX AI.")
 
 elif authentication_status == True:
-    # Record logs safely only once per session
     if 'logged_in_recorded' not in st.session_state:
         log_user_activity(username, name)
         st.session_state['logged_in_recorded'] = True
@@ -86,7 +93,6 @@ elif authentication_status == True:
         authenticator.logout('Logout', 'sidebar')
         st.markdown("---")
         
-        # Admin Special Tracking Panel (सिर्फ सुजीत को दिखेगा)
         if username == "sujit":
             st.header("👑 Admin Panel")
             show_logs = st.checkbox("View Login History")
@@ -127,7 +133,7 @@ elif authentication_status == True:
     st.markdown("---")
     st.header(f"📊 Enter {platform} Analytics Metrics")
 
-    # Dynamic Field Processing Engine based on Niche Language selection
+    # Dynamic Field Processing Engine
     if lang == "English":
         topic_shift_input = st.selectbox(
             "Did you change your core content theme/niche for this specific upload?",
@@ -206,6 +212,3 @@ elif authentication_status == True:
             else:
                 st.error(f"🚨 **स्थिति: एल्गोरिदम द्वारा रीच रोक दी गई है** (असफल होने की संभावना: {probability_dead * 100:.2f}%)")
                 if topic_shift_encoded == 1:
-                    st.warning(f"💡 **मुख्य कारण:** {platform} पर अचानक केटेगरी बदलने से यूजर बिहेवियर डेटा मॉडल टूट गया है। सिस्टम ने आपकी post की रीच रोक दी है!")
-                else:
-                    st.warning("💡 **सुझाव:** आपकी केटेगरी तो सही है, लेकिन मैट्रिक्स इतने कम हैं कि प्लेटफार्म का रिकमेंडेशन इंजन ट्रिगर नहीं हो रहा। अपनी पोस्ट की क्वालिटी तुरंत सुधारें!")
