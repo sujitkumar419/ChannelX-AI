@@ -13,16 +13,14 @@ st.set_page_config(
     layout="centered"
 )
 
-# 2. Database Handling: Read and Write config.yaml safely
+# 2. Database Handling: config.yaml से डेटा लोड करना
 if not os.path.exists('config.yaml'):
     default_config = {
         "cookie": {"expiry_days": 30, "key": "abcdef_secret_key", "name": "channelx_cookie"},
         "credentials": {
             "usernames": {
-                "sujit": {"email": "sujit@gmail.com", "first_name": "Sujit", "last_name": "Kumar",
-                          "password": "sujit123"},
-                "creator1": {"email": "creator@gmail.com", "first_name": "Rohan", "last_name": "Sharma",
-                             "password": "sharma123"}
+                "sujit": {"email": "sujit@gmail.com", "first_name": "Sujit", "last_name": "Kumar", "password": "$2a$12$MSYm6Gf5W7H6M9b8D2vK.O0Y2X5G7z8W9q1r3t5y7u9i1o2p3a4s5"},
+                "creator1": {"email": "creator@gmail.com", "first_name": "Rohan", "last_name": "Sharma", "password": "$2b$12$K8y7wD0d/67S8Kz36K2m.O7B6WzD9y3E3h/y4mE3R2fH4A5S6D7H"}
             }
         }
     }
@@ -32,14 +30,13 @@ if not os.path.exists('config.yaml'):
 with open('config.yaml', 'r') as file:
     config = yaml.load(file, Loader=SafeLoader)
 
-# 3. Initialize Authenticator Engine (4-Parameters Modern Layout)
+# 3. Authenticator इंजन इनिशियलाइज़ करना (4-Parameters Format)
 authenticator = stauth.Authenticate(
     config['credentials'],
     config['cookie']['name'],
     config['cookie']['key'],
     config['cookie']['expiry_days']
 )
-
 
 # Helper Function to Log User Activity
 def log_user_activity(username, name):
@@ -48,8 +45,7 @@ def log_user_activity(username, name):
     with open(log_file, "a", encoding="utf-8") as f:
         f.write(f"{current_time} | Username: {username} | Name: {name}\n")
 
-
-# 4. Render Login & Sign-Up Interface using Layout Tabs
+# 4. Render Login & Sign-Up Interface in Tabs
 tab1, tab2 = st.tabs(["🔒 Login", "📝 Sign Up / Register"])
 
 with tab1:
@@ -57,19 +53,21 @@ with tab1:
 
 with tab2:
     try:
+        # register_user नया यूजर बनाएगा और सही डिटेल्स रिटर्न करेगा
         if authenticator.register_user(location='main'):
             st.success('User registered successfully! Please switch to the Login tab. 🎉')
+            # 💾 जादुई स्टेप: नए यूजर का डेटा परमानेंटली YAML फ़ाइल में सेव करना
             with open('config.yaml', 'w') as file:
                 yaml.dump(config, file, default_flow_style=False, allow_unicode=True)
     except Exception as e:
         st.error(f"Registration Error: {e}")
 
-# 5. Retrieve login status fields from Session State
+# 5. Retrieve login status safely from Streamlit Session State
 authentication_status = st.session_state.get('authentication_status')
 username = st.session_state.get('username')
 name = st.session_state.get('name')
 
-# 6. Check Authentication Pipeline
+# 6. Check Authentication Logic
 if authentication_status == False:
     st.error("🚨 Username/password is incorrect. / यूजरनेम या पासवर्ड गलत है।")
 
@@ -77,22 +75,23 @@ elif authentication_status == None:
     st.warning("🔒 Please enter your username and password to unlock ChannelX AI.")
 
 elif authentication_status == True:
+    # Record logs safely only once per session
     if 'logged_in_recorded' not in st.session_state:
         log_user_activity(username, name)
         st.session_state['logged_in_recorded'] = True
 
-    # Sidebar Component Render
+    # Sidebar Config
     with st.sidebar:
         st.write(f"Welcome, **{name}**! 👋")
         authenticator.logout('Logout', 'sidebar')
         st.markdown("---")
-
-        # Exclusive Admin Dashboard Module
+        
+        # Admin Special Tracking Panel (सिर्फ सुजीत को दिखेगा)
         if username == "sujit":
             st.header("👑 Admin Panel")
             show_logs = st.checkbox("View Login History")
             st.markdown("---")
-
+            
         lang = st.radio("Choose Language / भाषा चुनें", ["English", "हिंदी"])
 
     # --- 👑 ADMIN PANEL UI LOGIC ---
@@ -107,7 +106,7 @@ elif authentication_status == True:
             st.info("No login logs found yet.")
         st.markdown("---")
 
-    # --- 🚦 CORE PRODUCT APPLICATION INTERFACE ---
+    # --- 🚦 MAIN CORE APP INTERFACE ---
     st.title("🚦 ChannelX AI 2.0")
     st.subheader("Cross-Platform Algorithm Diagnostics Engine 🌐")
     st.write("Select your digital platform to analyze content fatigue and algorithmic reach suppression.")
@@ -134,7 +133,7 @@ elif authentication_status == True:
             "Did you change your core content theme/niche for this specific upload?",
             options=["No (Consistent Niche)", "Yes (Heavy Topic Shift)"]
         )
-
+        
         if "YouTube" in platform:
             ctr_label, ctr_help = "Click-Through Rate (CTR) after 3 hours (%)", "Percentage of viewers who clicked your thumbnail."
             ret_label = "Audience Retention Rate (%)"
@@ -156,13 +155,13 @@ elif authentication_status == True:
         retention_input = st.slider(ret_label, 0.0, 100.0, 35.0, step=0.5)
         views_input = st.slider(ratio_label, 0.00, 1.00, 0.05, step=0.01)
         submit_btn = st.button("🚀 Run Algorithm Pulse Check")
-
+        
     else:
         topic_shift_input = st.selectbox(
             "क्या आपने इस विशिष्ट पोस्ट/वीडियो के लिए अपना मुख्य टॉपिक बदला है?",
             options=["नहीं (समान केटेगरी है)", "हाँ (अचानक नया टॉपिक डाला है)"]
         )
-
+        
         if "YouTube" in platform:
             ctr_label = "3 घंटे के बाद क्लिक-थ्रू रेट (CTR) (%)"
             ret_label = "ऑडियंस रिटेंशन रेट (Retention) (%)"
@@ -189,37 +188,24 @@ elif authentication_status == True:
     if submit_btn:
         topic_shift_encoded = 1 if "Yes" in topic_shift_input or "हाँ" in topic_shift_input else 0
         w_topic_shift, w_ctr, w_retention, w_views_ratio, intercept = 3.5124, -0.4102, -0.1054, -5.0211, 2.0145
-
-        z = (w_topic_shift * topic_shift_encoded) + (w_ctr * ctr_input) + (w_retention * retention_input) + (
-                    w_views_ratio * views_input) + intercept
+        
+        z = (w_topic_shift * topic_shift_encoded) + (w_ctr * ctr_input) + (w_retention * retention_input) + (w_views_ratio * views_input) + intercept
         probability_dead = 1 / (1 + np.exp(-z))
         probability_healthy = 1 - probability_dead
-
+        
         st.markdown("---")
         st.header("🎯 Algorithm Diagnostic Analysis Report")
-
+        
         if probability_dead >= 0.5:
             if lang == "English":
-                st.error(
-                    f"🚨 **Status: ALGORITHMIC SUPPRESSION DETECTED** (Probability of Failure: {probability_dead * 100:.2f}%)")
+                st.error(f"🚨 **Status: ALGORITHMIC SUPPRESSION DETECTED** (Probability of Failure: {probability_dead * 100:.2f}%)")
                 if topic_shift_encoded == 1:
-                    st.warning(
-                        f"💡 **Reason:** Shifting your niche on {platform} heavily fractured your core user behavior data model. The system suppressed the impressions!")
+                    st.warning(f"💡 **Reason:** Shifting your niche on {platform} heavily fractured your core user behavior data model. The system suppressed the impressions!")
                 else:
-                    st.warning(
-                        "💡 **Action Item:** Content niche is safe, but conversion rates are too low to trigger the platform's recommendation engine. Optimize your assets instantly!")
+                    st.warning("💡 **Action Item:** Content niche is safe, but conversion rates are too low to trigger the platform's recommendation engine. Optimize your assets instantly!")
             else:
-                st.error(
-                    f"🚨 **स्थिति: एल्गोरिदम द्वारा रीच रोक दी गई है** (असफल होने की संभावना: {probability_dead * 100:.2f}%)")
+                st.error(f"🚨 **स्थिति: एल्गोरिदम द्वारा रीच रोक दी गई है** (असफल होने की संभावना: {probability_dead * 100:.2f}%)")
                 if topic_shift_encoded == 1:
-                    st.warning(
-                        f"💡 **मुख्य कारण:** {platform} पर अचानक केटेगरी बदलने से यूजर बिहेवियर डेटा मॉडल टूट गया है। सिस्टम ने आपकी post की रीच रोक दी है!")
+                    st.warning(f"💡 **मुख्य कारण:** {platform} पर अचानक केटेगरी बदलने से यूजर बिहेवियर डेटा मॉडल टूट गया है। सिस्टम ने आपकी post की रीच रोक दी है!")
                 else:
-                    st.warning(
-                        "💡 **सुझाव:** आपकी केटेगरी तो सही है, लेकिन मैट्रिक्स इतने कम हैं कि प्लेटफार्म का रिकमेंडेशन इंजन ट्रिगर नहीं हो रहा। अपनी पोस्ट की क्वालिटी तुरंत सुधारें!")
-        else:
-            if lang == "English":
-                st.success(
-                    f"✅ **Status: HIGH REACH ENGAGEMENT** (Probability of Growth: {probability_healthy * 100:.2f}%)")
-                st.info(
-                    f"🌟 Excellent engagement signals! The {platform} algorithm is successfully indexing your post. Maintain consistent uploads within this niche.")
+                    st.warning("💡 **सुझाव:** आपकी केटेगरी तो सही है, लेकिन मैट्रिक्स इतने कम हैं कि प्लेटफार्म का रिकमेंडेशन इंजन ट्रिगर नहीं हो रहा। अपनी पोस्ट की क्वालिटी तुरंत सुधारें!")
