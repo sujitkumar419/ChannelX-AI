@@ -6,15 +6,11 @@ credentials:
   usernames:
     sujit:
       email: sujit@gmail.com
-      failed_login_attempts: 0
       first_name: Sujit
       last_name: Kumar
-      logged_in: false
-      password: $2a$12$MSYm6Gf5W7H6M9b8D2vK.O0Y2X5G7z8W9q1r3t5y7u9i1o2p3a4s5  # sujit123 का सिक्योर एनक्रिप्टेड हैश
+      password: sujit123
     creator1:
       email: creator@gmail.com
-      failed_login_attempts: 0
       first_name: Rohan
       last_name: Sharma
-      logged_in: false
-      password: $2a$12$K8y7wD0d/67S8Kz36K2m.O7B6WzD9y3E3h/y4mE3R2fH4A5S6D7H  # sharma123 का सिक्योर एनक्रिप्टed हैश
+      password: sharma123
