@@ -4,13 +4,34 @@ cookie:
   name: channelx_cookie
 credentials:
   usernames:
-    sujit:
-      email: sujit@gmail.com
-      first_name: Sujit
-      last_name: Kumar
-      password: sujit123
     creator1:
       email: creator@gmail.com
+      failed_login_attempts: 0
       first_name: Rohan
       last_name: Sharma
-      password: sharma123
+      logged_in: false
+      password: $2b$12$U4ama3Efdz4RFI.u0ksoEeNFmFusWekAiDfzd1lZCVEGsXe/0oQYS
+    sujit:
+      email: sujit@gmail.com
+      failed_login_attempts: 0
+      first_name: Sujit
+      last_name: Kumar
+      logged_in: true
+      password: $2b$12$6tScOBPVGL7TDz1cNHvD..tyYoyNwgsUgkl/bSSsI599Bhc88VqnW
+    sujitkumar:
+      email: sujitkumar03032007@gmail.com
+      first_name: sujit
+      last_name: kumar
+      logged_in: false
+      password: $2b$12$sQ2XtZziz0c4evshcxSN5.bFM5ILJS3V.VkThFSsR8cwNMkbyCR4e
+      password_hint: sujitkumar
+      roles: null
+    vishal:
+      email: vishalkumar0909@gmail.com
+      failed_login_attempts: 0
+      first_name: Vishal
+      last_name: Kumar
+      logged_in: true
+      password: $2b$12$EAfVA/dfizhRBAwIvF4Jbe2fvBVUbuc4HLNAF/ZpkA7QYi/.hW9AG
+      password_hint: Vishal
+      roles: null
