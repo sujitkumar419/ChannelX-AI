@@ -30,16 +30,14 @@ if not os.path.exists('config.yaml'):
 with open('config.yaml', 'r') as file:
     config = yaml.load(file, Loader=SafeLoader)
 
-# 🛠️ 2026 MASTER PRO-HACK: Dynamically hash plain passwords to prevent decryption errors
-# If the password string does not look like a bcrypt hash, we instantly hash it correctly.
+# 🛠️ Auto-Hash plain passwords to prevent decryption errors
 for username_key in config['credentials']['usernames']:
     raw_password = config['credentials']['usernames'][username_key]['password']
     if not str(raw_password).startswith('$2b$') and not str(raw_password).startswith('$2a$'):
-        # Automatically hash using the official library utility
-        hashed_password = stauth.Hasher([raw_password]).generate()[0]
+        hashed_password = stauth.Hasher([raw_password]).generate()
         config['credentials']['usernames'][username_key]['password'] = hashed_password
 
-# 3. Initialize Authenticator Engine safely with newly structured passwords
+# 3. Initialize Authenticator Engine safely
 authenticator = stauth.Authenticate(
     config['credentials'],
     config['cookie']['name'],
@@ -64,7 +62,6 @@ with tab2:
     try:
         if authenticator.register_user(location='main'):
             st.success('User registered successfully! Please switch to the Login tab. 🎉')
-            # Save the updated hashed credentials securely into config.yaml
             with open('config.yaml', 'w') as file:
                 yaml.dump(config, file, default_flow_style=False, allow_unicode=True)
     except Exception as e:
@@ -212,3 +209,5 @@ elif authentication_status == True:
             else:
                 st.error(f"🚨 **स्थिति: एल्गोरिदम द्वारा रीच रोक दी गई है** (असफल होने की संभावना: {probability_dead * 100:.2f}%)")
                 if topic_shift_encoded == 1:
+                    st.warning(f"💡 **मुख्य कारण:** {platform} पर अचानक केटेगरी बदलने से यूजर बिहेवियर डेटा मॉडल टूट गया है। सिस्टम ने आपकी post की रीच रोक दी है!")
+                else:
